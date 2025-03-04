@@ -33,6 +33,7 @@ jobs:
         username: ${{ secrets.WONHYEONG_MAC_MINI_USERNAME }}
         key: ${{ secrets.WONHYEONG_MAC_MINI_SSH_KEY }}
         script: |
+          bash -c '
           cd ${{ secrets.WONHYEONG_MAC_MINI_MEETNOW_HOME }}
           docker pull ${{ vars.WONHYEONG_DOCKER_HUB_ID }}/meetnow:latest
           docker stop meetnow || true
