@@ -24,8 +24,8 @@ jobs:
       run: |
         docker build -t ${{ vars.WONHYEONG_DOCKER_HUB_ID }}/meetnow:latest .
         docker push ${{ vars.WONHYEONG_DOCKER_HUB_ID }}/meetnow:latest
-        cache-from: type=registry,ref=${{ secrets.WONHYEONG_DOCKER_HUB_ID }}/myapp:cache
-        cache-to: type=registry,ref=${{ secrets.WONHYEONG_DOCKER_HUB_ID }}/myapp:cache,mode=max
+        cache-from: type=registry,ref=${{ secrets.WONHYEONG_DOCKER_HUB_ID }}/meetnow:cache
+        cache-to: type=registry,ref=${{ secrets.WONHYEONG_DOCKER_HUB_ID }}/meetnow:cache,mode=max
 
     - name: Deploy to Server via SSH
       uses: appleboy/ssh-action@v0.1.4
