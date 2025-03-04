@@ -33,11 +33,10 @@ jobs:
         username: ${{ secrets.WONHYEONG_MAC_MINI_USERNAME }}
         key: ${{ secrets.WONHYEONG_MAC_MINI_SSH_KEY }}
         script: |
-          bash -c '
           cd ${{ secrets.WONHYEONG_MAC_MINI_MEETNOW_HOME }}
-          docker pull ${{ vars.WONHYEONG_DOCKER_HUB_ID }}/meetnow:latest
-          docker stop meetnow || true
-          docker rm meetnow || true
-          docker run -d --name meetnow -p 3000:3000 --restart always \
+          /usr/local/bin/docker/docker pull ${{ vars.WONHYEONG_DOCKER_HUB_ID }}/meetnow:latest
+          /usr/local/bin/docker/docker stop meetnow || true
+          /usr/local/bin/docker/docker rm meetnow || true
+          /usr/local/bin/docker/docker run -d --name meetnow -p 3000:3000 --restart always \
             ${{ vars.WONHYEONG_DOCKER_HUB_ID }}/meetnow:latest
-          docker system prune -af
+          /usr/local/bin/docker/docker system prune -af
