@@ -1,15 +1,4 @@
 services:
-  app:
-    build: ./
-    container_name: meetnow
-    restart: always
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-    networks:
-      - app_network
-
   nginx:
     image: nginx:1.26.3
     container_name: nginx_proxy
