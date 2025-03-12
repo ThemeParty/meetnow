@@ -1,4 +1,13 @@
 services:
+  app:
+    image: meetnow2025/meetnow:latest # GitHub Actions에서 푸시한 이미지 사용
+    container_name: meetnow
+    expose:
+      - "3000"
+    restart: always
+    networks:
+      - app-network
+
   nginx:
     image: nginx:1.26.3
     container_name: nginx_proxy
@@ -13,7 +22,8 @@ services:
     depends_on:
       - app
     networks:
-      - app_network
+      - app-network
+      - proxy-network
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   certbot:
@@ -23,7 +33,11 @@ services:
       - ./certbot/www:/var/www/certbot:rw
       - ./certbot/conf:/etc/letsencrypt
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done'"
+    networks:
+      - proxy-network
   
 networks:
-  app_network:
+  app-network:
+    driver: bridge
+  proxy-network:
     driver: bridge
