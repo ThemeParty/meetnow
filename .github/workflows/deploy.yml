@@ -37,6 +37,8 @@ jobs:
           /usr/local/bin/docker pull ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest
           /usr/local/bin/docker stop meetnow || true
           /usr/local/bin/docker rm meetnow || true
-          /usr/local/bin/docker run -d --name meetnow -p 3000:3000 --restart always \
+          /usr/local/bin/docker run -d --name meetnow -p 3000:3000 \
+            --restart always \
+            --network meetnow_app-network \
             ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest
           /usr/local/bin/docker system prune -af
