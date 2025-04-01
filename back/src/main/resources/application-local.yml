@@ -1,0 +1,5 @@
+server:
+  port: 8891
+
+logging:
+  config: classpath:logback-local.xml

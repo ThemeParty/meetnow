@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: meetnow
+
+logging:
+  config: classpath:logback.xml
