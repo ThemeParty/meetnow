@@ -1,6 +1,15 @@
 spring:
   application:
     name: meetnow
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_URL}/postgres
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
 
 logging:
   config: classpath:logback.xml
