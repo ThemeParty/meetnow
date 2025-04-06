@@ -1,0 +1,8 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.removeUnusedImports": "explicit",
+  },
+  "color-highlight.matchHslWithNoFunction": true,
+  "color-highlight.markerType": "outline"
+}
