@@ -5,8 +5,6 @@ import { MoveRight } from 'lucide-react'
 import { BottomActions } from '@/components/actions'
 import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 
 import { Places } from './places'
 
@@ -22,11 +20,6 @@ export default function Page() {
         </div>
 
         <BottomActions className="flex flex-col gap-4">
-          <div className="flex items-center gap-4">
-            <Label htmlFor="addingLater">친구도 장소를 추가할 수 있어요.</Label>
-            <Switch id="addingLater" name="addingLater" />
-          </div>
-
           <div className="flex justify-between gap-2">
             <Button variant="outline" className="flex gap-4" asChild>
               <Link href="/meet/time" replace>
@@ -34,7 +27,7 @@ export default function Page() {
               </Link>
             </Button>
             <Button className="flex gap-4" asChild>
-              <Link href="/meet/made">
+              <Link href="/meet/confirm">
                 다음으로 <MoveRight />
               </Link>
             </Button>

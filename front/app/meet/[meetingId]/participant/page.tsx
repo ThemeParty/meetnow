@@ -8,22 +8,17 @@ import { Button } from '@/components/ui/button'
 
 export default function Page() {
   return (
-    <PageContainer title="이렇게 약속을 만들까요?">
-      <div>
-        앞에서 정한 약속 정보 요약해서 보여주기 날짜를 어떻게 보여줄지 고민해야
-        함
-      </div>
+    <PageContainer title="우리만날까요?">
+      <div>~~~~이 현재 1위에요</div>
 
       <BottomActions>
         <div className="flex justify-between gap-2">
-          <Button variant="outline" className="flex gap-4" asChild>
-            <Link href="/meet/time" replace>
-              이전 단계로
-            </Link>
+          <Button className="flex gap-4" asChild>
+            <Link href="/meet/time">모임 수정하기</Link>
           </Button>
           <Button className="flex gap-4" asChild>
-            <Link href="/meet/place">
-              end <MoveRight />
+            <Link href="/meet/123/confirm">
+              다음으로 <MoveRight />
             </Link>
           </Button>
         </div>
