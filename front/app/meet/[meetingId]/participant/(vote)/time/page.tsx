@@ -8,16 +8,18 @@ import { Button } from '@/components/ui/button'
 
 export default function Page() {
   return (
-    <PageContainer title="우리만날까요?">
-      <div>~~~~이 현재 1위에요</div>
+    <PageContainer title="익명의 피자님, 우리 이날 만나요!">
+      <div>가능한 시간 블럭을 모두 선택해 주세요</div>
+
+      <div>listing</div>
 
       <BottomActions>
         <div className="flex justify-between gap-2">
-          <Button className="flex gap-4" asChild>
-            <Link href="/meet/time">모임 수정하기</Link>
+          <Button variant="outline" asChild>
+            <Link href="">이전 단계로</Link>
           </Button>
-          <Button className="flex gap-4" asChild>
-            <Link href="/meet/123/participant/time">
+          <Button asChild>
+            <Link href="/meet/123/participant/place">
               다음으로 <MoveRight />
             </Link>
           </Button>
