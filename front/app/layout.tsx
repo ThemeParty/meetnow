@@ -1,3 +1,5 @@
+import type { Viewport } from 'next'
+
 import { Geist } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 
@@ -13,6 +15,15 @@ export const metadata = {
   description: '모임 만들어요. 문구 생각해봐요',
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  minimumScale: 1,
+}
+
 const geistSans = Geist({
   display: 'swap',
   subsets: ['latin'],
@@ -25,18 +36,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
-      <body className="bg-background text-foreground">
+      <body className="flex min-h-screen flex-col antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <main className="flex min-h-screen flex-col items-center">
-            <div className="flex w-full flex-1 flex-col items-center gap-20">
-              <div className="flex max-w-5xl flex-col gap-20 p-5">
-                {children}
-              </div>
+          <main className="flex flex-1 justify-center">
+            <div className="min-h-full w-full max-w-screen-sm md:max-w-screen-md">
+              {children}
             </div>
           </main>
         </ThemeProvider>
