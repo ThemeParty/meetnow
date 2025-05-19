@@ -1,15 +1,10 @@
 spring:
   application:
     name: meetnow
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${DB_URL}/postgres
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: none
-    open-in-view: false
+  data:
+    mongodb:
+      database: meetnow
+      uri: mongodb+srv://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@meetnow.0of2r5k.mongodb.net/?retryWrites=true&w=majority&appName=Meetnow
 
 logging:
   config: classpath:logback.xml
