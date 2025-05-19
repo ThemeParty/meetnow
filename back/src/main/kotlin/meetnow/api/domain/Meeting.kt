@@ -1,25 +1,36 @@
 package meetnow.api.domain
 
+import meetnow.api.dto.MeetingCreateRequest
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.Instant
 
-@Document(collation = "meetings")
+@Document
 data class Meeting(
     @Id
     val id: String? = null,
     val name: String,
-    val createdBy: String = "",
+    val hashedId: String,
+    val finalPlace: String? = null,
+    val scheduleAt: Instant? = null,
+    val voteClosedAt: Instant? = null,
+    val meetingDateTimes: List<MeetingDateTime>,
+    val meetingPlaces: List<MeetingPlace>,
+    val participants: List<Participant>? = null,
     val createdAt: Instant = Instant.now(),
+    val updatedAt: Instant = Instant.now()
 ) {
-    /**
-     * TODO 아래 필드들 추가
-     * 1. 후보 장소들
-     * 2. 최종 결정 장소
-     * 3. 후보 시간들
-     */
-    var scheduleAt: Instant? = null
-    var voteClosedAt: Instant? = null
-    var updatedBy: String? = null
-    var updatedAt: Instant? = null
+    companion object {
+        fun createWithHashedId(
+            request: MeetingCreateRequest,
+            hashedId: String
+        ): Meeting {
+            return Meeting(
+                name = request.name,
+                hashedId = hashedId,
+                meetingDateTimes = request.meetingDateTimes.map { MeetingDateTime(value = it) },
+                meetingPlaces = request.meetingPlaces.map { MeetingPlace(name = it) },
+            )
+        }
+    }
 }
