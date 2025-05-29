@@ -3,7 +3,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "2.1.20"
     kotlin("plugin.spring") version "2.1.20"
-    kotlin("plugin.jpa") version "2.1.20"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
 }
 
@@ -23,11 +22,10 @@ dependencies {
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // DB
-    implementation("org.postgresql:postgresql:42.7.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
     // test
     testImplementation("io.kotest:kotest-runner-junit5-jvm:5.9.1")
