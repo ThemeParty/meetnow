@@ -1,9 +1,5 @@
 package meetnow.api.constant
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KLogger
 
-inline val <reified T : Any> T.logger: Logger
-    get() = LoggerFactory.getLogger(T::class.java)
-
-object Constants
+inline val logger: KLogger get() = KotlinLoggerCache.getLogger {}
