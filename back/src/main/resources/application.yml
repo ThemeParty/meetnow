@@ -6,5 +6,8 @@ spring:
       database: meetnow
       uri: mongodb+srv://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@meetnow.0of2r5k.mongodb.net/?retryWrites=true&w=majority&appName=Meetnow
 
+server:
+  port: 8891
+
 logging:
   config: classpath:logback.xml
