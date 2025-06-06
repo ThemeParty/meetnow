@@ -18,19 +18,18 @@ data class Meeting(
     val meetingPlaces: List<MeetingPlace>,
     val participants: List<Participant>? = null,
     val createdAt: Instant = Instant.now(),
-    val updatedAt: Instant = Instant.now()
+    val updatedAt: Instant = Instant.now(),
 ) {
     companion object {
         fun createWithHashedId(
             request: MeetingCreateRequest,
-            hashedId: String
-        ): Meeting {
-            return Meeting(
+            hashedId: String,
+        ): Meeting =
+            Meeting(
                 name = request.name,
                 hashedId = hashedId,
                 meetingDateTimes = request.meetingDateTimes.map { MeetingDateTime(value = it) },
                 meetingPlaces = request.meetingPlaces.map { MeetingPlace(name = it) },
             )
-        }
     }
 }

@@ -8,10 +8,11 @@ object MeetingHashedIdGenerator {
     private val random = SecureRandom()
 
     fun generate(): String {
-        val timestampPart = System.currentTimeMillis().toString(36).takeLast(ID_LENGTH/2)
-        val randomPart = (1..ID_LENGTH/2)
-            .map { ALPHABET_CHARS[random.nextInt(ALPHABET_CHARS.size)] }
-            .joinToString("")
+        val timestampPart = System.currentTimeMillis().toString(36).takeLast(ID_LENGTH / 2)
+        val randomPart =
+            (1..ID_LENGTH / 2)
+                .map { ALPHABET_CHARS[random.nextInt(ALPHABET_CHARS.size)] }
+                .joinToString("")
         return timestampPart + randomPart
     }
 }
