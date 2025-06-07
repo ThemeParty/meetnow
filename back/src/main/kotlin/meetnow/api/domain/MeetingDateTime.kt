@@ -1,10 +1,10 @@
 package meetnow.api.domain
 
-import java.time.LocalDateTime
+import java.time.Instant
 import java.util.UUID
 
 data class MeetingDateTime(
     val id: String = UUID.randomUUID().toString(),
-    val value: LocalDateTime,
+    val dateTime: Instant,
     val participants: List<Participant>? = null,
 )

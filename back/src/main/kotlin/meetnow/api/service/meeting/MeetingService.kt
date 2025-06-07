@@ -3,20 +3,29 @@ package meetnow.api.service.meeting
 import meetnow.api.constant.logger
 import meetnow.api.domain.Meeting
 import meetnow.api.dto.MeetingCreateRequest
+import meetnow.api.dto.MeetingResponse
 import meetnow.api.error.MeetnowErrorCode
 import meetnow.api.exception.MeetnowException
 import meetnow.api.repository.MeetingRepository
 import meetnow.api.util.MeetingHashedIdGenerator
+import meetnow.api.util.toKSTLocalDateTime
 import org.springframework.stereotype.Service
 
 @Service
 class MeetingService(
     private val repository: MeetingRepository,
 ) {
-    fun getMeeting(hashedMeetingId: String): Meeting {
+    fun getMeeting(hashedMeetingId: String): MeetingResponse {
         val meeting = getMeetingByHashedId(hashedMeetingId)
         logger.debug { "Meeting 조회 성공: $hashedMeetingId" }
-        return meeting
+
+        return MeetingResponse.fromMeeting(
+            meeting = meeting,
+            finalPlace = meeting.finalPlace ?: meeting.getMostVotedPlace()?.name,
+            scheduleAt =
+                meeting.scheduleAt?.toKSTLocalDateTime()
+                    ?: meeting.getMostVotedDateTime()?.dateTime?.toKSTLocalDateTime(),
+        )
     }
 
     private fun getMeetingByHashedId(hashedMeetingId: String): Meeting =

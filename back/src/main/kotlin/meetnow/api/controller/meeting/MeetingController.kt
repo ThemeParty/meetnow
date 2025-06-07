@@ -19,10 +19,7 @@ class MeetingController(
     @GetMapping("{hashedMeetingId}")
     fun getMeeting(
         @PathVariable hashedMeetingId: String,
-    ): MeetingResponse {
-        meetingService.getMeeting(hashedMeetingId)
-        return MeetingResponse("", "")
-    }
+    ): MeetingResponse = meetingService.getMeeting(hashedMeetingId)
 
     @PostMapping
     fun createMeeting(
