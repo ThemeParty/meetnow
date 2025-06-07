@@ -11,3 +11,5 @@ server:
 
 logging:
   config: classpath:logback.xml
+
+api.access-key: ${ACCESS_KEY_SECRET}
