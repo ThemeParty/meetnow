@@ -11,8 +11,8 @@ import { Places } from './places'
 export default function Page() {
   return (
     <PageContainer title="우리 어디서 만날까요?">
-      <div>
-        <div>
+      <div className='m-4'>
+        <div className='flex flex-col gap-4'>
           <div>친구들에게 5개까지 제안할 수 있어요. 투표로 결정돼요.</div>
           <div>
             <Places />
