@@ -20,4 +20,9 @@ class MeetingRepository(
         val query = Query(Criteria.where(Meeting::hashedId.name).`is`(hashedId))
         return mongoTemplateAdapter.find(query, entityClass).firstOrNull()
     }
+
+    fun existsByHashedId(hashedId: String): Boolean {
+        val query = Query(Criteria.where(Meeting::hashedId.name).`is`(hashedId))
+        return mongoTemplateAdapter.exists(query, entityClass)
+    }
 }
