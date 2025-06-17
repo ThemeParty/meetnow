@@ -12,7 +12,7 @@ interface ErrorResponse {
 class ApiClient {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'http://localhost:9000') {
+  constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9000') {
     this.baseUrl = baseUrl;
   }
 
