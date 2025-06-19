@@ -1,18 +1,21 @@
 'use client'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-interface PlacesProps {}
+interface PlacesProps {
+  places: string[]
+  setPlaces: React.Dispatch<React.SetStateAction<string[]>>
+}
 
-export function Places(params: PlacesProps) {
-  const [places, setPlaces] = useState<string[]>([])
+export function Places({ places, setPlaces }: PlacesProps) {
   const ref = useRef<HTMLInputElement>(null)
 
   const onAdd = () => {
     const value = ref.current!.value!
+    if (value.trim() === '') return
     setPlaces((old) => [...old, value])
     ref.current!.value = ''
   }
