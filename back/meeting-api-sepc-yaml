@@ -1,0 +1,87 @@
+openapi: 3.0.1
+info:
+  title: Meeting API
+  version: 1.0.0
+paths:
+  /meetings/{hashedMeetingId}:
+    get:
+      summary: Get meeting by hashedMeetingId
+      parameters:
+        - name: hashedMeetingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeetingResponse'
+        '404':
+          description: Meeting not found
+  /meetings:
+    post:
+      summary: Create a new meeting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeetingCreateRequest'
+      responses:
+        '200':
+          description: Meeting created
+        '400':
+          description: Bad request
+components:
+  schemas:
+    MeetingCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Team Sync
+        description:
+          type: string
+          example: Weekly team meeting
+        date:
+          type: string
+          format: date-time
+          example: 2024-06-01T10:00:00Z
+        organizer:
+          type: string
+          example: alice@example.com
+      required:
+        - title
+        - date
+        - organizer
+    MeetingResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 123456
+        hashedMeetingId:
+          type: string
+          example: abcd1234
+        title:
+          type: string
+          example: Team Sync
+        description:
+          type: string
+          example: Weekly team meeting
+        date:
+          type: string
+          format: date-time
+          example: 2024-06-01T10:00:00Z
+        organizer:
+          type: string
+          example: alice@example.com
+      required:
+        - id
+        - hashedMeetingId
+        - title
+        - date
+        - organizer
