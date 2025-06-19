@@ -42,5 +42,5 @@ EXPOSE 8891
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8891/actuator/health || exit 1
 
-# Run the application with default profile
-ENTRYPOINT ["java", "-Dspring.profiles.active=local", "-jar", "app.jar"]
+# Run the application with environment variable for profile
+ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-local}", "-jar", "app.jar"]

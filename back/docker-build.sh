@@ -12,8 +12,9 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}🚀 MeetNow Backend Docker 빌드를 시작합니다...${NC}"
 
 # 이미지 이름과 태그 설정
-IMAGE_NAME="meetnow-backend"
-TAG=${1:-latest}
+# 사용법: ./docker-build.sh [이미지명] [태그]
+IMAGE_NAME=${1:-meetnow-backend}
+TAG=${2:-latest}
 
 echo -e "${YELLOW}📦 이미지: ${IMAGE_NAME}:${TAG}${NC}"
 
