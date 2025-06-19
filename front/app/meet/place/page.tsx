@@ -46,8 +46,9 @@ export default function Page() {
       const result = await createMeeting(meetingPayload)
       // 미팅 생성 후 다음 페이지로 이동
       router.push(`/meet/${result.hashedMeetingId}`)
-    } catch (error) {
+    } catch (error: any) {
       console.error('미팅 생성 실패:', error)
+      alert(error?.message)
       // 에러 처리 (예: 사용자에게 알림)
     }
   }

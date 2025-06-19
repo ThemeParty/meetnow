@@ -32,7 +32,7 @@ export function Places({ places, setPlaces }: PlacesProps) {
     <div>
       <Label htmlFor="place">약속 장소</Label>
       <div className="flex gap-4">
-        <Input id="place" name="place" ref={ref} />
+        <Input id="place" name="place" ref={ref} onKeyDown={(e) => { if (e.key === 'Enter') onAdd(); }} />
         <Button onClick={onAdd}>추가</Button>
       </div>
 

@@ -1,15 +1,15 @@
 'use server'
-import { apiClient } from "@/lib/client";
+import { apiClient } from '@/lib/client'
 
 interface MeetingData {
-    name: string; // 미팅 제목
-    meetingDateTimes: string[]; // ISO 8601 형식의 날짜 및 시간 문자열 배열 (예: ["2025-06-03T18:00:00", "2025-06-10T19:00:00"])
-    meetingPlaces: string[]; // 미팅 장소 문자열 배열
-    closedDate: string; // ISO 8601 형식의 마감 날짜 및 시간 (예: "2025-05-25T18:00:00")
+  name: string // 미팅 제목
+  meetingDateTimes: string[] // ISO 8601 형식의 날짜 및 시간 문자열 배열 (예: ["2025-06-03T18:00:00", "2025-06-10T19:00:00"])
+  meetingPlaces: string[] // 미팅 장소 문자열 배열
+  closedDate: string // ISO 8601 형식의 마감 날짜 및 시간 (예: "2025-05-25T18:00:00")
 }
 
 interface CreateMeetingResponse {
-  hashedMeetingId: string;
+  hashedMeetingId: string
 }
 
 /**
@@ -17,51 +17,61 @@ interface CreateMeetingResponse {
  * @param meetingData 생성할 미팅 데이터
  * @returns 생성된 미팅의 응답 데이터
  */
-export const createMeeting = async (meetingData: MeetingData): Promise<CreateMeetingResponse> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/meeting`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(meetingData),
-    });
+export const createMeeting = async (
+  meetingData: MeetingData,
+): Promise<CreateMeetingResponse> => {
+  console.log(`${process.env.API_BASE_URL}/api/v1/meetings`, meetingData)
+  const response = await fetch(`${process.env.API_BASE_URL}/api/v1/meetings`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: '6월 Meetnow 스터디 모임',
+      meetingDateTimes: ['2025-06-03T18:00:00', '2025-06-10T19:00:00'],
+      meetingPlaces: ['MDM 타워', '10X 타워'],
+      closedDate: '2025-05-25T18:00:00',
+    }),
+  })
 
-    if (!response.ok) {
-        throw new Error('Failed to create meeting');
-    }
+  console.log('rseult', response.ok)
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error('Failed to create meeting' + JSON.stringify(error))
+  }
 
-    return await response.json();
-};
+  return await response.json()
+}
 
 // --- GET /api/v1/meetings/:hashedMeetingId 응답 타입 ---
 
 interface ParticipantResponse {
-    id: string;
-    name: string;
+  id: string
+  name: string
 }
 
 interface MeetingDateTimeResponse {
-    id: string;
-    dateTime: string; // LocalDateTime as ISO 8601 string
-    participants: ParticipantResponse[];
+  id: string
+  dateTime: string // LocalDateTime as ISO 8601 string
+  participants: ParticipantResponse[]
 }
 
 interface MeetingPlaceResponse {
-    id: string;
-    placeName: string;
-    participants: ParticipantResponse[];
+  id: string
+  placeName: string
+  participants: ParticipantResponse[]
 }
 
 // 미팅 상세 정보에 대한 응답 타입 (MeetingResponse.kt 기반)
 interface MeetingDetail {
-    hashedMeetingId: string;
-    name: string;
-    finalPlace: string | null;
-    scheduleAt: string | null; // LocalDateTime as ISO 8601 string
-    voteClosedAt: string; // LocalDateTime as ISO 8601 string
-    meetingDateTimes: MeetingDateTimeResponse[];
-    meetingPlaces: MeetingPlaceResponse[];
-    createdAt: string; // LocalDateTime as ISO 8601 string
+  hashedMeetingId: string
+  name: string
+  finalPlace: string | null
+  scheduleAt: string | null // LocalDateTime as ISO 8601 string
+  voteClosedAt: string // LocalDateTime as ISO 8601 string
+  meetingDateTimes: MeetingDateTimeResponse[]
+  meetingPlaces: MeetingPlaceResponse[]
+  createdAt: string // LocalDateTime as ISO 8601 string
 }
 
 /**
@@ -69,7 +79,9 @@ interface MeetingDetail {
  * @param hashedMeetingId 가져올 미팅의 해시된 ID
  * @returns 특정 미팅의 상세 정보 응답 데이터
  */
-export const getMeetingDetail = async (hashedMeetingId: string): Promise<MeetingDetail> => {
-    const response = await apiClient.get(`/api/v1/meetings/${hashedMeetingId}`);
-    return response.data as MeetingDetail;
-};
+export const getMeetingDetail = async (
+  hashedMeetingId: string,
+): Promise<MeetingDetail> => {
+  const response = await apiClient.get(`/api/v1/meetings/${hashedMeetingId}`)
+  return response.data as MeetingDetail
+}

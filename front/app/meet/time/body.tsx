@@ -18,6 +18,17 @@ export const Body = () => {
   const [periodType, setPeriodType] = useState<string>(meetingData.duration || 'individual');
   const [startTime, setStartTime] = useState<string>(meetingData.times[0] || '');
   const [endTime, setEndTime] = useState<string>(meetingData.times[1] || '');
+  const [meetingName, setMeetingName] = useState(meetingData.name);
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setMeetingName(newName);
+    updateMeetingData({ name: newName });
+  };
+
+  useEffect(() => {
+    setMeetingName(meetingData.name);
+  }, [meetingData.name]);
 
   useEffect(() => {
     updateMeetingData({ duration: periodType });
@@ -38,6 +49,17 @@ export const Body = () => {
 
   return (
     <div className="mt-10">
+      <div className="mx-6 my-4 flex flex-col gap-2">
+        <Label>약속 이름</Label>
+        <Input
+          type="text"
+          placeholder="미팅 이름을 입력해주세요"
+          value={meetingName}
+          onChange={handleNameChange}
+          className="text-xl font-bold border rounded p-2 mb-4 w-full"
+        />
+      </div>
+
       <div className="flex w-full justify-center px-6">
         <RadioGroup
           defaultValue="individual"
