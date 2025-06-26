@@ -1,46 +1,12 @@
-# Build stage
-FROM gradle:8.7-jdk21 AS build
-
-# Set working directory
+# 1단계: 빌드
+FROM gradle:jdk21-alpine AS builder
 WORKDIR /app
+COPY . .
+RUN gradle build -x test
 
-# Copy gradle files first for better caching
-COPY gradle/ gradle/
-COPY gradlew gradlew.bat build.gradle.kts settings.gradle.kts gradle.properties ./
-
-# Download dependencies
-RUN gradle dependencies --no-daemon
-
-# Copy source code
-COPY src/ src/
-
-# Build the application
-RUN gradle build --no-daemon -x test -x ktlintCheck -x ktlintFormat -x runKtlintCheckOverMainSourceSet -x runKtlintCheckOverKotlinScripts
-
-# Runtime stage
-FROM openjdk:21-jdk-slim
-
-# Set working directory
+# 2단계: 실행
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-
-# Create non-root user
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-
-# Copy the built jar from build stage
-COPY --from=build /app/build/libs/*.jar app.jar
-
-# Change ownership to non-root user
-RUN chown appuser:appuser app.jar
-
-# Switch to non-root user
-USER appuser
-
-# Expose port
+COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8891
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8891/actuator/health || exit 1
-
-# Run the application with default profile
-ENTRYPOINT ["java", "-Dspring.profiles.active=local", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"] 
