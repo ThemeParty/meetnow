@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class MeetingRepository(
-    private val mongoTemplateAdapter: MongoTemplateAdapter
+    private val mongoTemplateAdapter: MongoTemplateAdapter,
 ) {
     private val entityClass = Meeting::class.java
 

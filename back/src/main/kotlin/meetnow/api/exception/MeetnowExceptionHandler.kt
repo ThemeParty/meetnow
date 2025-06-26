@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class MeetnowExceptionHandler {
-
     @ExceptionHandler(MeetnowException::class)
     fun handleMeetnowException(exception: MeetnowException): ResponseEntity<MeetnowErrorResponse>? {
         logger.error(exception) { "MeetnowException이 발생했습니다." }
