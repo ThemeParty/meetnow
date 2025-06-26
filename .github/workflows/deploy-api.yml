@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Deploy Meetnow API
 
 on:
   workflow_dispatch:
@@ -22,23 +22,24 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest .
-        docker push ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest
+        cd back
+        docker build -t ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow-api:latest .
+        docker push ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow-api:latest
 
     - name: Deploy to Server via SSH
       uses: appleboy/ssh-action@v0.1.4
       with:
         host: meetnow.kr
-        port: 25522
+        port: ${{ secrets.WONHYEONG_MAC_MINI_SSH_PORT }}
         username: ${{ secrets.WONHYEONG_MAC_MINI_USERNAME }}
         key: ${{ secrets.WONHYEONG_MAC_MINI_SSH_KEY }}
         script: |
           cd ${{ secrets.WONHYEONG_MAC_MINI_MEETNOW_HOME }}
-          /usr/local/bin/docker pull ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest
-          /usr/local/bin/docker stop meetnow || true
-          /usr/local/bin/docker rm meetnow || true
-          /usr/local/bin/docker run -d --name meetnow -p 3000:3000 \
+          /usr/local/bin/docker pull ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow-api:latest
+          /usr/local/bin/docker stop meetnow-api || true
+          /usr/local/bin/docker rm meetnow-api || true
+          /usr/local/bin/docker run -d --name meetnow-api -p 8891:8891 \
             --restart always \
             --network meetnow_app-network \
-            ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest
-          /usr/local/bin/docker system prune -af
+            ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow-api:latest
+          /usr/local/bin/docker system prune -af 
