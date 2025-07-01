@@ -13,22 +13,35 @@ import {
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 
-export function TimeTicker() {
-  const [timeValue, setTime] = React.useState<string>()
+interface TimeTickerProps {
+  value: string;
+  onSelect: (time: string) => void;
+}
+
+export function TimeTicker({ value, onSelect }: TimeTickerProps) {
+  const [timeValue, setTimeValue] = React.useState<string>(value)
   const [isOpen, setIsOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    setTimeValue(value);
+  }, [value]);
 
   const hours = Array.from({ length: 24 }, (_, i) => i)
 
-  const handleTimeChange = (type: 'hour' | 'minute', value: string) => {
-    if (value) {
-      const timeValues = timeValue?.split(':') || []
+  const handleTimeChange = (type: 'hour' | 'minute', val: string) => {
+    let newTime = timeValue || '';
+    const parts = newTime.split(':');
+    let hour = parts[0] || '00';
+    let minute = parts[1] || '00';
 
-      if (type === 'hour') {
-        setTime(`${value}:${timeValues?.[1] || ''}`)
-      } else if (type === 'minute') {
-        setTime(`${timeValues?.[0] || ''}:${value}`)
-      }
+    if (type === 'hour') {
+      hour = val.padStart(2, '0');
+    } else if (type === 'minute') {
+      minute = val.padStart(2, '0');
     }
+    newTime = `${hour}:${minute}`;
+    setTimeValue(newTime);
+    onSelect(newTime);
   }
 
   return (
@@ -59,15 +72,15 @@ export function TimeTicker() {
                     size="icon"
                     variant={
                       timeValue &&
-                      timeValue.split(':')[0] ===
-                        String(hour === 0 ? '00' : hour)
+                        timeValue.split(':')[0] ===
+                        String(hour).padStart(2, '0')
                         ? 'default'
                         : 'ghost'
                     }
                     className="aspect-square shrink-0 sm:w-full"
                     onClick={() => handleTimeChange('hour', hour.toString())}
                   >
-                    {hour}
+                    {String(hour).padStart(2, '0')}
                   </Button>
                 ))}
               </div>
@@ -86,8 +99,8 @@ export function TimeTicker() {
                     size="icon"
                     variant={
                       timeValue &&
-                      timeValue.split(':')[1] ===
-                        String(minute === 0 ? '00' : minute)
+                        timeValue.split(':')[1] ===
+                        String(minute).padStart(2, '0')
                         ? 'default'
                         : 'ghost'
                     }

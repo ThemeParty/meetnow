@@ -3,7 +3,10 @@ import type { Viewport } from 'next'
 import { Geist } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 
+import { MeetingCreationProvider } from '@/lib/context/MeetingCreationContext'
+
 import './globals.css'
+import { Toaster } from '@/components/ui/sonner'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -43,11 +46,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="flex flex-1 justify-center">
-            <div className="min-h-full w-full max-w-screen-sm md:max-w-screen-md">
-              {children}
-            </div>
-          </main>
+          <MeetingCreationProvider>
+            <main className="flex flex-1 justify-center">
+              <div className="min-h-full w-full max-w-screen-sm md:max-w-screen-md">
+                {children}
+              </div>
+            </main>
+          </MeetingCreationProvider>
+          <Toaster className="!bottom-14" />
         </ThemeProvider>
       </body>
     </html>

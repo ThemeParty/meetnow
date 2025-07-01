@@ -1,9 +1,14 @@
+'use client'
+
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 
 import { MoveRight } from 'lucide-react'
 
 import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { useMeetingCreation } from '@/lib/context/MeetingCreationContext'
 
 export default function Page() {
   return (
