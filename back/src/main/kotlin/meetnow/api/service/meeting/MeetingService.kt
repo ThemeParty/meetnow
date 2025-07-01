@@ -35,10 +35,11 @@ class MeetingService(
             exposeMessageToClient = true,
         )
 
-    fun createMeeting(meetingCreateRequest: MeetingCreateRequest) {
+    fun createMeeting(meetingCreateRequest: MeetingCreateRequest): String {
         val hashedId = makeMeetingHashedId()
         val meeting = Meeting.createWithHashedId(meetingCreateRequest, hashedId)
         repository.save(meeting)
+        return hashedId
     }
 
     private fun makeMeetingHashedId(): String {
@@ -50,10 +51,8 @@ class MeetingService(
             }
             retryCount++
             if (retryCount >= 10) {
-                // TODO: MeetnowException을 정의하여 사용하도록 변경
                 val errorMessage = "Meeting의 해시 아이디를 생성하는 최대 횟수를 초과했습니다."
-                logger.error(errorMessage)
-                throw RuntimeException(errorMessage)
+                throw MeetnowException(MeetnowErrorCode.INTERNAL_SERVER_ERROR, errorMessage)
             }
         }
     }

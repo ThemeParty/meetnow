@@ -2,6 +2,7 @@ package meetnow.api.controller.meeting
 
 import meetnow.api.constant.RequestPaths
 import meetnow.api.dto.MeetingCreateRequest
+import meetnow.api.dto.MeetingCreateResponse
 import meetnow.api.dto.MeetingResponse
 import meetnow.api.service.meeting.MeetingService
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,7 +25,8 @@ class MeetingController(
     @PostMapping
     fun createMeeting(
         @RequestBody meetingCreateRequest: MeetingCreateRequest,
-    ) {
-        meetingService.createMeeting(meetingCreateRequest)
+    ): MeetingCreateResponse {
+        val hashedMeetingId = meetingService.createMeeting(meetingCreateRequest)
+        return MeetingCreateResponse(hashedMeetingId)
     }
 }
