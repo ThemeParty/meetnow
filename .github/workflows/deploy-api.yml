@@ -29,7 +29,7 @@ jobs:
     - name: Deploy to Server via SSH
       uses: appleboy/ssh-action@v0.1.4
       with:
-        host: meetnow.kr
+        host: ${{ secrets.MEETNOW_SERVER_IP }}
         port: ${{ secrets.WONHYEONG_MAC_MINI_SSH_PORT }}
         username: ${{ secrets.WONHYEONG_MAC_MINI_USERNAME }}
         key: ${{ secrets.WONHYEONG_MAC_MINI_SSH_KEY }}
@@ -41,5 +41,8 @@ jobs:
           /usr/local/bin/docker run -d --name meetnow-api -p 8891:8891 \
             --restart always \
             --network meetnow_app-network \
+            -e SPRING_PROFILES_ACTIVE=prod \
+            -e MONGO_DB_USERNAME=${{ secrets.MEETNOW_MONGO_DB_USERNAME }} \
+            -e MONGO_DB_PASSWORD=${{ secrets.MEETNOW_MONGO_DB_PASSWORD }} \
             ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow-api:latest
           /usr/local/bin/docker system prune -af 
