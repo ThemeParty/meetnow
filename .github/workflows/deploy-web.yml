@@ -1,4 +1,4 @@
-name: Deploy Meetnow Web
+name: Deploy Meetnow WEB🚀
 
 on:
   workflow_dispatch:
@@ -29,17 +29,17 @@ jobs:
     - name: Deploy to Server via SSH
       uses: appleboy/ssh-action@v0.1.4
       with:
-        host: meetnow.kr
+        host: ${{ secrets.MEETNOW_SERVER_IP }}
         port: ${{ secrets.WONHYEONG_MAC_MINI_SSH_PORT }}
         username: ${{ secrets.WONHYEONG_MAC_MINI_USERNAME }}
         key: ${{ secrets.WONHYEONG_MAC_MINI_SSH_KEY }}
         script: |
           cd ${{ secrets.WONHYEONG_MAC_MINI_MEETNOW_HOME }}
-          /usr/local/bin/docker pull ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest
-          /usr/local/bin/docker stop meetnow || true
-          /usr/local/bin/docker rm meetnow || true
-          /usr/local/bin/docker run -d --name meetnow -p 3000:3000 \
+          /opt/homebrew/bin/docker pull ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest
+          /opt/homebrew/bin/docker stop meetnow || true
+          /opt/homebrew/bin/docker rm meetnow || true
+          /opt/homebrew/bin/docker run -d --name meetnow -p 3000:3000 \
             --restart always \
             --network meetnow_app-network \
             ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow:latest
-          /usr/local/bin/docker system prune -af
+          /opt/homebrew/bin/docker system prune -af

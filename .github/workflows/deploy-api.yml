@@ -1,4 +1,4 @@
-name: Deploy Meetnow API
+name: Deploy Meetnow API🚀
 
 on:
   workflow_dispatch:
