@@ -35,14 +35,14 @@ jobs:
         key: ${{ secrets.WONHYEONG_MAC_MINI_SSH_KEY }}
         script: |
           cd ${{ secrets.WONHYEONG_MAC_MINI_MEETNOW_HOME }}
-          docker pull ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow-api:latest
-          docker stop meetnow-api || true
-          docker rm meetnow-api || true
-          docker run -d --name meetnow-api -p 8891:8891 \
+          /opt/homebrew/bin/docker pull ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow-api:latest
+          /opt/homebrew/bin/docker stop meetnow-api || true
+          /opt/homebrew/bin/docker rm meetnow-api || true
+          /opt/homebrew/bin/docker run -d --name meetnow-api -p 8891:8891 \
             --restart always \
             --network meetnow_app-network \
             -e SPRING_PROFILES_ACTIVE=prod \
             -e MONGO_DB_USERNAME=${{ secrets.MEETNOW_MONGO_DB_USERNAME }} \
             -e MONGO_DB_PASSWORD=${{ secrets.MEETNOW_MONGO_DB_PASSWORD }} \
             ${{ vars.MEETNOW_DOCKER_HUB_ID }}/meetnow-api:latest
-          docker system prune -af 
+          /opt/homebrew/bin/docker system prune -af 
