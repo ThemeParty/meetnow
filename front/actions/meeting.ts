@@ -1,5 +1,5 @@
-'use server'
-import { apiClient } from '@/lib/client'
+'use server';
+import env from '@/lib/environment';
 
 interface MeetingData {
   name: string // 미팅 제목
@@ -20,8 +20,7 @@ interface CreateMeetingResponse {
 export const createMeeting = async (
   meetingData: MeetingData,
 ): Promise<CreateMeetingResponse> => {
-  console.log(`${process.env.API_BASE_URL}/api/v1/meetings`, meetingData)
-  const response = await fetch(`${process.env.API_BASE_URL}/api/v1/meetings`, {
+  const response = await fetch(`${env.API_BASE_URL}/api/v1/meetings`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -82,6 +81,14 @@ interface MeetingDetail {
 export const getMeetingDetail = async (
   hashedMeetingId: string,
 ): Promise<MeetingDetail> => {
-  const response = await apiClient.get(`/api/v1/meetings/${hashedMeetingId}`)
-  return response.data as MeetingDetail
+  const response = await fetch(
+    `${env.API_BASE_URL}/api/v1/meetings/${hashedMeetingId}`,
+  )
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error('Failed to fetch meeting details' + JSON.stringify(error))
+  }
+
+  return await response.json()
 }
