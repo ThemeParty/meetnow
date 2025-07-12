@@ -24,6 +24,7 @@ export const createMeeting = async (
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-api-key': 'KM1D8wQdH12F7d3UIaHSfvl5RgeAmZVsjtEhvLSqb3bkWXA1CPrQTAgYCWJ8ATaW'
     },
     body: JSON.stringify({
       name: '6월 Meetnow 스터디 모임',
@@ -33,7 +34,7 @@ export const createMeeting = async (
     }),
   })
 
-  console.log('rseult', response.ok)
+  console.log('result', response.ok)
   if (!response.ok) {
     const error = await response.text()
     throw new Error('Failed to create meeting' + JSON.stringify(error))
@@ -83,6 +84,11 @@ export const getMeetingDetail = async (
 ): Promise<MeetingDetail> => {
   const response = await fetch(
     `${env.API_BASE_URL}/api/v1/meetings/${hashedMeetingId}`,
+    {    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': 'KM1D8wQdH12F7d3UIaHSfvl5RgeAmZVsjtEhvLSqb3bkWXA1CPrQTAgYCWJ8ATaW'
+    },
+}
   )
 
   if (!response.ok) {
