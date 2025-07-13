@@ -4,6 +4,7 @@ import { Geist } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 
 import { MeetingCreationProvider } from '@/lib/context/MeetingCreationContext'
+import { VoteProvider } from '@/context/VoteContext'
 
 import './globals.css'
 import { Toaster } from '@/components/ui/sonner'
@@ -47,11 +48,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <MeetingCreationProvider>
-            <main className="flex flex-1 justify-center">
-              <div className="min-h-full w-full max-w-screen-sm md:max-w-screen-md">
-                {children}
-              </div>
-            </main>
+            <VoteProvider>
+              <main className="flex flex-1 justify-center">
+                <div className="min-h-full w-full max-w-screen-sm md:max-w-screen-md">
+                  {children}
+                </div>
+              </main>
+            </VoteProvider>
           </MeetingCreationProvider>
           <Toaster className="!bottom-14" />
         </ThemeProvider>
