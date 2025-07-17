@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 
 export default function Page({ params }: { params: { meetingId: string } }) {
   return (
-    <PageContainer title="우리만날까요?">
+    <PageContainer title="우리 만날까요?">
       <div className='p-4'>
         <div>~~~~이 현재 1위에요</div>
 

@@ -8,6 +8,7 @@ interface MeetingData {
     dates: string[];
     times: string[];
     userName: string;
+    places: string[];
 }
 
 interface MeetingCreationContextType {
@@ -25,6 +26,7 @@ export const MeetingCreationProvider = ({ children }: { children: ReactNode }) =
         dates: [],
         times: [],
         userName: '',
+        places: [],
     });
 
     const updateMeetingData = (newData: Partial<MeetingData>) => {
@@ -38,6 +40,7 @@ export const MeetingCreationProvider = ({ children }: { children: ReactNode }) =
             dates: [],
             times: [],
             userName: '',
+            places: [],
         });
     };
 

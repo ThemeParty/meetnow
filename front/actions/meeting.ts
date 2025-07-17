@@ -21,27 +21,25 @@ export const createMeeting = async (
   meetingData: MeetingData,
 ): Promise<CreateMeetingResponse> => {
   // API 호출이 아직 구현되지 않았으므로 주석 처리
-  // const response = await fetch(`${env.API_BASE_URL}/api/v1/meetings`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'x-api-key': 'KM1D8wQdH12F7d3UIaHSfvl5RgeAmZVsjtEhvLSqb3bkWXA1CPrQTAgYCWJ8ATaW'
-  //   },
-  //   body: JSON.stringify({
-  //     name: '6월 Meetnow 스터디 모임',
-  //     meetingDateTimes: ['2025-06-03T18:00:00', '2025-06-10T19:00:00'],
-  //     meetingPlaces: ['MDM 타워', '10X 타워'],
-  //     closedDate: '2025-05-25T18:00:00',
-  //   }),
-  // })
+  const response = await fetch(`${env.API_BASE_URL}/api/v1/meetings`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': 'KM1D8wQdH12F7d3UIaHSfvl5RgeAmZVsjtEhvLSqb3bkWXA1CPrQTAgYCWJ8ATaW'
+    },
+    body: JSON.stringify({
+      name: '6월 Meetnow 스터디 모임',
+      meetingDateTimes: ['2025-06-03T18:00:00', '2025-06-10T19:00:00'],
+      meetingPlaces: ['MDM 타워', '10X 타워'],
+      closedDate: '2025-05-25T18:00:00',
+    }),
+  })
 
   // 입력값 확인용 로그
   console.log('createMeeting input:', meetingData);
 
   // Mock 데이터 반환
-  return {
-    hashedMeetingId: 'mock-meeting-id-123'
-  };
+  return await response.json()
 }
 
 interface SaveParticipantData {
