@@ -1,0 +1,6 @@
+api:
+  access-key: test-api-key
+
+logging:
+  level:
+    meetnow.api: DEBUG

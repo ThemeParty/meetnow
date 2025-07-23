@@ -1,0 +1,9 @@
+= MeetNow REST API 문서
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+== 모임 조회 API
+
+include::{snippets}/get-meeting/http-request.adoc[]
+include::{snippets}/get-meeting/http-response.adoc[]
