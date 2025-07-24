@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { MoveRight } from 'lucide-react'
-import { createMeeting } from '@/actions/meeting'
 
+import { MoveRight } from 'lucide-react'
+
+import { createMeeting } from '@/actions/meeting'
 import { BottomActions } from '@/components/actions'
 import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
@@ -16,31 +17,30 @@ export default function Page() {
 
   const handleSubmit = async () => {
     // 미팅 날짜와 시간을 ISO 8601 형식으로 결합
-    const meetingDateTimes = meetingData.dates.flatMap(date => {
-      const times = meetingData.times;
+    const meetingDateTimes = meetingData.dates.flatMap((date) => {
+      const times = meetingData.times
       if (times.length === 2) {
         return [
           `${date}T${times[0]}:00`, // 초 추가
           `${date}T${times[1]}:00`,
-        ];
+        ]
       }
-      return [];
-    });
+      return []
+    })
 
     // 마감 날짜를 현재로부터 7일 뒤로 설정 (임의 값, 필요시 변경)
-    const now = new Date();
-    const closedDate = new Date(now.setDate(now.getDate() + 7)).toISOString();
+    const now = new Date()
+    const closedDate = new Date(now.setDate(now.getDate() + 7)).toISOString()
 
     const meetingPayload = {
       name: meetingData.name,
       meetingDateTimes: meetingDateTimes,
       meetingPlaces: meetingData.places,
       closedDate: closedDate,
-    };
+    }
 
     try {
       const result = await createMeeting(meetingPayload)
-      // 미팅 생성 후 다음 페이지로 이동
       router.push(`/meet/${result.hashedMeetingId}`)
     } catch (error: any) {
       console.error('미팅 생성 실패:', error)
@@ -58,21 +58,21 @@ export default function Page() {
           {meetingData.dates.map((date, dateIndex) => (
             <div key={dateIndex} className="ml-4">
               {date}:
-              {meetingData.times.map((time, timeIndex) => (
+              {meetingData.times.map((time, timeIndex, times) => (
                 <span key={timeIndex} className="ml-2">
-                  {time}:00
+                  {time}:00 {timeIndex === 0 ? ' ~' : ''}
                 </span>
               ))}
             </div>
           ))}
           <div className="font-semibold">장소:</div>
-          <div className="ml-4">
+          <ul className="ml-4 list-inside list-disc">
             {meetingData.places.map((place, index) => (
-              <span key={index} className="ml-2">
+              <li key={index} className="ml-2">
                 {place}
-              </span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         <BottomActions>

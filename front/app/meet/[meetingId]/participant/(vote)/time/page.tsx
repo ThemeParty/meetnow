@@ -1,17 +1,15 @@
-'use client'
+'use client';
+import { useEffect, use, useState } from 'react';
 
-import { useEffect, use, useState } from 'react'
+import Link from 'next/link';
 
-import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { MoveRight } from 'lucide-react';
 
-import { MoveRight } from 'lucide-react'
-
-import { getMeetingDetail } from '@/actions/meeting'
-import { BottomActions } from '@/components/actions'
-import { PageContainer } from '@/components/page-container'
-import { Button } from '@/components/ui/button'
-import { useVote } from '@/context/VoteContext'
+import { getMeetingDetail } from '@/actions/meeting';
+import { BottomActions } from '@/components/actions';
+import { PageContainer } from '@/components/page-container';
+import { Button } from '@/components/ui/button';
+import { useVote } from '@/context/VoteContext';
 
 interface MeetingDateTimeResponse {
   id: string
@@ -19,7 +17,11 @@ interface MeetingDateTimeResponse {
   participants: any[]
 }
 
-export default function Page({ params }: { params: Promise<{ meetingId: string }> }) {
+export default function Page({
+  params,
+}: {
+  params: Promise<{ meetingId: string }>
+}) {
   const { meetingId } = use(params)
   const [meeting, setMeeting] = useState<any>(null)
   const { selectedTimes, toggleTime } = useVote()
