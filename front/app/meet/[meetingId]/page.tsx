@@ -1,7 +1,5 @@
 'use client'
-import { useState } from 'react'
-
-import { useSearchParams } from 'next/navigation'
+import { use, useState } from 'react'
 
 import { Copy, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -9,10 +7,13 @@ import { toast } from 'sonner'
 import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
 
-export default function Page() {
-  const searchParams = useSearchParams()
-  const meetingId = searchParams.get('meetingId') || ''
-  const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL || ''}/meet/${meetingId}/participant`
+export default function Page({
+  params,
+}: {
+  params: Promise<{ meetingId: string }>
+}) {
+  const { meetingId } = use(params)
+  const shareUrl = `${window.location.origin}/meet/${meetingId}/participant`
   const [isCopied, setIsCopied] = useState(false)
 
   const handleCopyLink = async () => {

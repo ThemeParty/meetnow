@@ -7,7 +7,7 @@ export const PageContainer = ({
 }) => {
   return (
     <div className="min-v-screen relative">
-      <h1 className="ml-6 mt-16 text-4xl">{title}</h1>
+      <h1 className="ml-6 mt-16 mr-4 text-4xl">{title}</h1>
       <div>{children}</div>
     </div>
   )

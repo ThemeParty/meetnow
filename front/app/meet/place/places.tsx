@@ -1,21 +1,24 @@
 'use client'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useMeetingCreation } from '@/lib/context/MeetingCreationContext'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-interface PlacesProps {
-  places: string[]
-  setPlaces: React.Dispatch<React.SetStateAction<string[]>>
-}
+export function Places() {
+  const [places, setPlaces] = useState<string[]>([])
+  const { updateMeetingData } = useMeetingCreation()
 
-export function Places({ places, setPlaces }: PlacesProps) {
+  useEffect(() => {
+    updateMeetingData({ places })
+  }, [places])
+
   const ref = useRef<HTMLInputElement>(null)
 
   const onAdd = () => {
-    const value = ref.current!.value!
-    if (value.trim() === '') return
+    const value = ref.current!.value.trim()
+    if (value === '') return
     setPlaces((old) => [...old, value])
     ref.current!.value = ''
   }
@@ -31,18 +34,33 @@ export function Places({ places, setPlaces }: PlacesProps) {
   return (
     <div>
       <Label htmlFor="place">약속 장소</Label>
-      <div className="flex gap-4">
-        <Input id="place" name="place" ref={ref} onKeyDown={(e) => { if (e.key === 'Enter') onAdd(); }} />
-        <Button onClick={onAdd}>추가</Button>
+      <div className="mt-1">
+        <div className="flex gap-4">
+          <Input
+            id="place"
+            name="place"
+            ref={ref}
+
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                if (!e.nativeEvent.isComposing) {
+                  onAdd()
+                }
+              }
+            }}
+          />
+          <Button onClick={onAdd}>추가</Button>
+        </div>
       </div>
 
-      <ul className="mt-4">
+      <ul className="mt-6 space-y-2">
         {places.map((place, index) => {
           return (
             <li key={place}>
               <div className="flex gap-4">
                 <div className="flex flex-1">
-                  <span className="middle p-2">{index + 1}</span>
+                  <span className="w-7 p-2">{index + 1}</span>
                   <span className="flex-1 rounded-sm border p-2">{place}</span>
                 </div>
                 <Button

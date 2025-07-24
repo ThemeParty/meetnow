@@ -14,3 +14,6 @@ pn dev
  - 모임 참여 시간 투표하기: /meet/{id}/participant/time
  - 모임 참여 장소 투표하기: /meet/{id}/participant/place
  - 모임 참여 완료: /meet/{id}/participant/{participantId}
+
+ # swagger 
+ [swagger](http://175.207.44.51:25353/swagger-ui/index.html)
