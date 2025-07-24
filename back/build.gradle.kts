@@ -11,8 +11,6 @@ group = "meetnow"
 version = "1.0.0"
 java.sourceCompatibility = JavaVersion.VERSION_21
 
-val snippetsDir by extra { file("build/generated-snippets") }
-
 repositories {
     mavenCentral()
 }
@@ -27,6 +25,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 
     // DB
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
@@ -47,49 +46,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    outputs.dir(snippetsDir)
-}
-
-tasks.asciidoctor {
-    doFirst {
-        delete("src/main/resources/static/docs")
-    }
-
-    inputs.dir(snippetsDir)
-    dependsOn(tasks.test)
-    setSourceDir("src/docs/asciidoc")
-    outputOptions {
-        backends("html")
-    }
-    attributes(
-        mapOf(
-            "snippets" to snippetsDir,
-        ),
-    )
-}
-
-tasks.bootJar {
-    dependsOn(tasks.asciidoctor)
-    from("${tasks.asciidoctor.get().outputDir}/html5") {
-        into("static/docs")
-    }
-    archiveFileName.set("app.jar")
-    launchScript()
-    doLast {
-        copy {
-            from("build/libs/app.jar")
-        }
-    }
-}
-
-tasks.register<Copy>("copyDocs") {
-    dependsOn("asciidoctor")
-    from("build/docs/asciidoc")
-    into("src/main/resources/static/docs")
-}
-
-tasks.build {
-    dependsOn("copyDocs")
 }
 
 kotlin {

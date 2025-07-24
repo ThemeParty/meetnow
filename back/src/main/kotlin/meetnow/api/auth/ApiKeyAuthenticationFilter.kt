@@ -4,12 +4,14 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import meetnow.api.constant.Constants.SWAGGER_API_DOCS_PATH
+import meetnow.api.constant.Constants.SWAGGER_URL_PATH
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.InsufficientAuthenticationException
 import org.springframework.stereotype.Component
+import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
-import kotlin.jvm.Throws
 
 fun HttpServletRequest.requireHeader(name: String): String =
     this.getHeader(name)
@@ -20,6 +22,15 @@ class ApiKeyAuthenticationFilter(
     @Value("\${api.access-key}")
     private val validApiKey: String,
 ) : OncePerRequestFilter() {
+    private val pathMatcher = AntPathMatcher()
+    private val swaggerPath =
+        listOf(
+            SWAGGER_URL_PATH,
+            SWAGGER_API_DOCS_PATH,
+        )
+
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean = swaggerPath.any { pathMatcher.match(it, request.requestURI) }
+
     init {
         require(validApiKey.isNotBlank()) { "API access key must not be null or blank" }
     }
