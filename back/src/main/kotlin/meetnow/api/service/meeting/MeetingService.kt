@@ -6,9 +6,9 @@ import meetnow.api.dto.MeetingCreateRequest
 import meetnow.api.dto.MeetingResponse
 import meetnow.api.error.MeetnowErrorCode
 import meetnow.api.exception.MeetnowException
+import meetnow.api.mapper.toMeetingResponse
 import meetnow.api.repository.MeetingRepository
 import meetnow.api.util.MeetingHashedIdGenerator
-import meetnow.api.util.toKSTLocalDateTime
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,13 +19,7 @@ class MeetingService(
         val meeting = getMeetingByHashedId(hashedMeetingId)
         logger.debug { "Meeting 조회 성공: $hashedMeetingId" }
 
-        return MeetingResponse.fromMeeting(
-            meeting = meeting,
-            finalPlace = meeting.finalPlace ?: meeting.getMostVotedPlace()?.name,
-            scheduleAt =
-                meeting.scheduleAt?.toKSTLocalDateTime()
-                    ?: meeting.getMostVotedDateTime()?.dateTime?.toKSTLocalDateTime(),
-        )
+        return meeting.toMeetingResponse()
     }
 
     private fun getMeetingByHashedId(hashedMeetingId: String): Meeting =
@@ -55,5 +49,13 @@ class MeetingService(
                 throw MeetnowException(MeetnowErrorCode.INTERNAL_SERVER_ERROR, errorMessage)
             }
         }
+    }
+
+    fun closeMeeting(hashedMeetingId: String): MeetingResponse {
+        val meeting = getMeetingByHashedId(hashedMeetingId)
+        meeting.close()
+        repository.save(meeting)
+        logger.debug { "Meeting 종료 성공: $meeting" }
+        return meeting.toMeetingResponse()
     }
 }
