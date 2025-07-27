@@ -12,9 +12,9 @@ data class Meeting(
     val id: String? = null,
     val name: String,
     val hashedId: String,
-    val finalPlace: String? = null,
-    val scheduleAt: Instant? = null,
-    val voteClosedAt: Instant,
+    var finalPlace: List<String>? = null,
+    var scheduleAt: List<Instant>? = null,
+    var voteClosedAt: Instant,
     val meetingDateTimes: List<MeetingDateTime>,
     val meetingPlaces: List<MeetingPlace>,
     val participants: List<Participant>? = null,
@@ -41,13 +41,26 @@ data class Meeting(
             )
     }
 
-    fun getMostVotedPlace(): MeetingPlace? =
-        meetingPlaces.maxByOrNull {
-            it.participants?.size ?: 0
-        }
+    fun getMostVotedPlaces(): List<String> {
+        val maxVotes = meetingPlaces.maxOfOrNull { it.participants?.size ?: 0 } ?: 0
+        return meetingPlaces
+            .filter { (it.participants?.size ?: 0) == maxVotes }
+            .map { it.name }
+    }
 
-    fun getMostVotedDateTime(): MeetingDateTime? =
-        meetingDateTimes.maxByOrNull {
-            it.participants?.size ?: 0
-        }
+    fun getMostVotedDateTimes(): List<Instant> {
+        val maxVotes = meetingDateTimes.maxOfOrNull { it.participants?.size ?: 0 } ?: 0
+        return meetingDateTimes
+            .filter { (it.participants?.size ?: 0) == maxVotes }
+            .map { it.dateTime }
+    }
+
+    fun close() {
+        val finalPlaces = getMostVotedPlaces()
+        val scheduleAtTimes = getMostVotedDateTimes()
+
+        this.finalPlace = finalPlaces
+        this.scheduleAt = scheduleAtTimes
+        this.voteClosedAt = Instant.now()
+    }
 }

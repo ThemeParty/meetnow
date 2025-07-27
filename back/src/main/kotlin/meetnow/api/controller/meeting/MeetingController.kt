@@ -29,4 +29,9 @@ class MeetingController(
         val hashedMeetingId = meetingService.createMeeting(meetingCreateRequest)
         return MeetingCreateResponse(hashedMeetingId)
     }
+
+    @PostMapping("{hashedMeetingId}/close")
+    fun closeMeeting(
+        @PathVariable hashedMeetingId: String,
+    ): MeetingResponse = meetingService.closeMeeting(hashedMeetingId)
 }

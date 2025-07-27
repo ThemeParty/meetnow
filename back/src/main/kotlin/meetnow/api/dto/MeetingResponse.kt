@@ -10,8 +10,8 @@ import java.time.LocalDateTime
 data class MeetingResponse(
     val hashedMeetingId: String,
     val name: String,
-    val finalPlace: String? = null,
-    val scheduleAt: LocalDateTime? = null,
+    val finalPlace: List<String>? = null,
+    val scheduleAt: List<LocalDateTime>? = null,
     val voteClosedAt: LocalDateTime,
     val meetingDateTimes: List<MeetingDateTimeResponse> = emptyList(),
     val meetingPlaces: List<MeetingPlaceResponse> = emptyList(),
@@ -20,8 +20,8 @@ data class MeetingResponse(
     companion object {
         fun fromMeeting(
             meeting: Meeting,
-            finalPlace: String? = null,
-            scheduleAt: LocalDateTime? = null,
+            finalPlace: List<String>? = null,
+            scheduleAt: List<LocalDateTime>? = null,
         ): MeetingResponse =
             MeetingResponse(
                 hashedMeetingId = meeting.hashedId,
