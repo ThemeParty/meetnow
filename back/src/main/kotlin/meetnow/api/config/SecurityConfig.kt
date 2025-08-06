@@ -31,6 +31,7 @@ class SecurityConfig(
                 // 요청에 대한 권한 부여를 시작합니다.
                 authorize
                     .anyRequest()
+//                    .authenticated()
                     .permitAll()
             }.addFilterBefore(
                 apiKeyAuthenticationFilter, // 커스텀 API 키 필터 추가
