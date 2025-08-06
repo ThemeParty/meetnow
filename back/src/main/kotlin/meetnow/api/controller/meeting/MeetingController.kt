@@ -28,6 +28,11 @@ class MeetingController(
         return MeetingCreateResponse(hashedMeetingId)
     }
 
+    @PostMapping("{hashedMeetingId}/close")
+    fun closeMeeting(
+        @PathVariable hashedMeetingId: String,
+    ): MeetingResponse = meetingService.closeMeeting(hashedMeetingId)
+
     @PostMapping("{hashedMeetingId}/vote")
     fun voteInMeeting(
         @PathVariable hashedMeetingId: String,
