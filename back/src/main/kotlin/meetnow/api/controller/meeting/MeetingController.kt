@@ -1,7 +1,11 @@
 package meetnow.api.controller.meeting
 
 import meetnow.api.constant.RequestPaths
-import meetnow.api.dto.*
+import meetnow.api.dto.MeetingCreateRequest
+import meetnow.api.dto.MeetingCreateResponse
+import meetnow.api.dto.MeetingResponse
+import meetnow.api.dto.MeetingVoteRequest
+import meetnow.api.dto.MeetingVoteResponse
 import meetnow.api.service.meeting.MeetingService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

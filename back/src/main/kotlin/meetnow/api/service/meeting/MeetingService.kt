@@ -54,13 +54,14 @@ class MeetingService(
             }
         }
     }
-    
+
     fun closeMeeting(hashedMeetingId: String): MeetingResponse {
         val meeting = getMeetingByHashedId(hashedMeetingId)
         meeting.close()
         repository.save(meeting)
         logger.debug { "Meeting 종료 성공: $meeting" }
         return meeting.toMeetingResponse()
+    }
 
     /** 미팅 장소 / 시간 투표 */
     fun voteInMeeting(
