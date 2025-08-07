@@ -1,5 +1,7 @@
 'use server';
-type ParticipantInfo = {
+import env from '@/lib/environment';
+
+interface ParticipantInfo {
   id: string
   name: string
   preferredTimes: string[]
@@ -10,13 +12,31 @@ export async function getParticipantInfo(
   meetingId: string,
   participantId: string,
 ): Promise<ParticipantInfo> {
-  // TODO: Replace with actual API call
-  // This is a mock implementation
+  const response = await fetch(
+    `${env.API_BASE_URL}/api/v1/meetings/${meetingId}/participants/${participantId}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': env.ACCESS_KEY_SECRET,
+      },
+    },
+  )
 
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(
+      `참여자 정보 조회 실패: ${response.status} ${response.statusText}${errorData.message ? ` - ${errorData.message}` : ''}`,
+    )
+  }
+
+  const data = await response.json()
+  
+  // API 응답을 기존 인터페이스에 맞춰 변환
   return {
-    id: participantId,
-    name: '참여자',
-    preferredTimes: ['월요일 오후 2시', '화요일 오전 10시'],
-    preferredLocations: ['서울 강남구', '서울 서초구'],
+    id: data.id,
+    name: data.name,
+    preferredTimes: data.selectedDateTimes || [],
+    preferredLocations: data.selectedPlaces || [],
   }
 }

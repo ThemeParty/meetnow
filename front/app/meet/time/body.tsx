@@ -48,7 +48,7 @@ export const Body = () => {
   };
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 mb-20">
       <div className="mx-6 my-4 flex flex-col gap-2">
         <Label>약속 이름</Label>
         <Input

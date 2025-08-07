@@ -2,16 +2,17 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 
 import { MoveRight } from 'lucide-react'
 
 import { BottomActions } from '@/components/actions'
 import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
+import { ParticipantNameDisplay } from '@/components/participant-name-display'
 import { getMeetingDetail } from '@/actions/meeting'
 import { useVote } from '@/context/VoteContext'
-import { saveParticipantData } from '@/actions/meeting'
+import { voteInMeeting } from '@/actions/meeting'
 
 interface MeetingPlaceResponse {
   id: string
@@ -21,19 +22,30 @@ interface MeetingPlaceResponse {
 
 export default function Page() {
   const { meetingId } = useParams() as { meetingId: string }
+  const router = useRouter()
   const [meeting, setMeeting] = useState<any>(null)
-  const { selectedPlaces, togglePlace } = useVote()
+  const { selectedTimes, selectedPlaces, togglePlace } = useVote()
 
   const handleNextClick = async () => {
     if (!meetingId) return
+
+    // localStorage에서 참여자 이름 가져오기
+    const participantName = localStorage.getItem(`participant-name-${meetingId}`)
+    if (!participantName) {
+      alert('참여자 이름을 먼저 입력해주세요.')
+      return
+    }
+
     try {
-      const participant = await saveParticipantData({
-        meetingId,
-        selectedPlaces,
+      const result = await voteInMeeting(meetingId, {
+        participantName,
+        preferredDateTimeIds: selectedTimes,
+        preferredPlaceIds: selectedPlaces,
       })
-      window.location.href = `/meet/${meetingId}/participant/${participant.id}`
+      router.push(`/meet/${meetingId}/participant/${result.participantInfo.id}`)
     } catch (error) {
-      console.error('Failed to save participant data:', error)
+      console.error('Failed to save vote data:', error)
+      alert('투표 저장에 실패했습니다. 다시 시도해주세요.')
     }
   }
 
@@ -49,6 +61,15 @@ export default function Page() {
   return (
     <PageContainer title="익명의 피자님, 우리 여기서 만나요!">
       <div className="p-4">
+        {/* 참여자 이름 표시 */}
+        <div className="mb-4 rounded-lg bg-blue-50 p-3">
+          <div className="text-sm text-blue-700 mb-1">현재 참여자</div>
+          <ParticipantNameDisplay
+            meetingId={meetingId}
+            showEditButton={true}
+            className="text-blue-800"
+          />
+        </div>
 
         <div>원하는 장소를 모두 선택해 주세요</div>
         <div className="flex flex-col gap-2 my-4">
