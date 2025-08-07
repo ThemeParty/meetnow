@@ -9,6 +9,7 @@ import { getMeetingDetail } from '@/actions/meeting';
 import { BottomActions } from '@/components/actions';
 import { PageContainer } from '@/components/page-container';
 import { Button } from '@/components/ui/button';
+import { ParticipantNameDisplay } from '@/components/participant-name-display';
 import { useVote } from '@/context/VoteContext';
 
 interface MeetingDateTimeResponse {
@@ -39,6 +40,16 @@ export default function Page({
   return (
     <PageContainer title="익명의 피자님, 우리 이날 만나요!">
       <div className="p-4">
+        {/* 참여자 이름 표시 */}
+        <div className="mb-4 rounded-lg bg-blue-50 p-3">
+          <div className="text-sm text-blue-700 mb-1">현재 참여자</div>
+          <ParticipantNameDisplay
+            meetingId={meetingId}
+            showEditButton={true}
+            className="text-blue-800"
+          />
+        </div>
+
         <div>가능한 시간 블럭을 모두 선택해 주세요</div>
         <div className="my-4 flex flex-col gap-2">
           {meeting?.meetingDateTimes?.map((dt: MeetingDateTimeResponse) => (
@@ -58,7 +69,7 @@ export default function Page({
         <BottomActions>
           <div className="flex justify-between gap-2">
             <Button variant="outline" asChild>
-              <Link href={meetingId ? `/meet/${meetingId}/participant` : ''}>
+              <Link href={meetingId ? `/meet/${meetingId}/participant/name` : ''}>
                 이전 단계로
               </Link>
             </Button>
