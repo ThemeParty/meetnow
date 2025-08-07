@@ -6,10 +6,15 @@ import { BottomActions } from '@/components/actions'
 import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
 
-export default function Page({ params }: { params: { meetingId: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ meetingId: string }>
+}) {
+  const { meetingId } = await params
   return (
     <PageContainer title="우리 만날까요?">
-      <div className='p-4'>
+      <div className="p-4">
         <div>~~~~이 현재 1위에요</div>
 
         <BottomActions>
@@ -18,8 +23,7 @@ export default function Page({ params }: { params: { meetingId: string } }) {
               <Link href="/meet/time">모임 수정하기</Link>
             </Button>
             <Button className="flex gap-4" asChild>
-              <Link href={`/meet/${params.meetingId}/participant/time`}>
-
+              <Link href={`/meet/${meetingId}/participant/time`}>
                 다음으로 <MoveRight />
               </Link>
             </Button>
