@@ -2,23 +2,25 @@
 
 import { useState, useEffect } from 'react'
 
-import { Calendar1 } from 'lucide-react'
+import { Calendar1, Plus } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useMeetingCreation } from '@/lib/context/MeetingCreationContext'
 
-import { MultipleSelectCalendar } from './mutiple-select-calendar'
-import { RangeSelectCalendar } from './range-select-calendar'
-import { TimeTicker } from './time-ticker'
+import { ScheduleSelectionModal } from './schedule-selection-modal'
 
 export const Body = () => {
   const { meetingData, updateMeetingData } = useMeetingCreation();
-  const [periodType, setPeriodType] = useState<string>(meetingData.duration || 'individual');
-  const [startTime, setStartTime] = useState<string>(meetingData.times[0] || '');
-  const [endTime, setEndTime] = useState<string>(meetingData.times[1] || '');
   const [meetingName, setMeetingName] = useState(meetingData.name);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [schedules, setSchedules] = useState<Array<{
+    id: string;
+    dates: string[];
+    startTime: string;
+    endTime: string;
+  }>>([]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -30,20 +32,46 @@ export const Body = () => {
     setMeetingName(meetingData.name);
   }, [meetingData.name]);
 
-  useEffect(() => {
-    updateMeetingData({ duration: periodType });
-  }, [periodType]);
+  const handleAddSchedule = (data: {
+    dates: string[];
+    startTime: string;
+    endTime: string;
+  }) => {
+    const newSchedule = {
+      id: Date.now().toString(),
+      ...data
+    };
+    const newSchedules = [...schedules, newSchedule];
+    setSchedules(newSchedules);
+    
+    // 첫 번째 일정의 데이터로 meetingData 업데이트
+    if (newSchedules.length === 1) {
+      updateMeetingData({
+        duration: 'individual',
+        dates: data.dates,
+        times: [data.startTime, data.endTime]
+      });
+    }
+  };
 
-  useEffect(() => {
-    updateMeetingData({ times: [startTime, endTime] });
-  }, [startTime, endTime]);
-
-  const handleDatesSelect = (dates?: Date[]) => {
-    if (dates) {
-      const formattedDates = dates.map(date => date.toISOString().split('T')[0]);
-      updateMeetingData({ dates: formattedDates });
+  const handleRemoveSchedule = (id: string) => {
+    const newSchedules = schedules.filter(schedule => schedule.id !== id);
+    setSchedules(newSchedules);
+    
+    // 일정이 삭제된 후 첫 번째 일정으로 meetingData 업데이트
+    if (newSchedules.length > 0) {
+      const firstSchedule = newSchedules[0];
+      updateMeetingData({
+        duration: 'individual',
+        dates: firstSchedule.dates,
+        times: [firstSchedule.startTime, firstSchedule.endTime]
+      });
     } else {
-      updateMeetingData({ dates: [] });
+      updateMeetingData({
+        duration: 'individual',
+        dates: [],
+        times: ['', '']
+      });
     }
   };
 
@@ -60,60 +88,59 @@ export const Body = () => {
         />
       </div>
 
-      <div className="flex w-full justify-center px-6">
-        <RadioGroup
-          defaultValue="individual"
-          className="flex w-full gap-4"
-          onValueChange={setPeriodType}
-          value={periodType}
-        >
-          <div className="w-full">
-            <RadioGroupItem
-              value="individual"
-              id="individual"
-              className="peer sr-only"
-            />
-            <Label
-              htmlFor="individual"
-              className="flex flex-1 flex-col items-center justify-between gap-2 rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-            >
-              <Calendar1 />
-              날짜로 선택
-            </Label>
+      <div className="mx-6 my-4 flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <Label>일정</Label>
+          <Button 
+            onClick={() => setIsModalOpen(true)}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            일정 추가
+          </Button>
+        </div>
+
+        {schedules.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <Calendar1 className="h-12 w-12 mb-4" />
+            <p>아직 선택된 일정이 없습니다.</p>
+            <p className="text-sm">일정 추가 버튼을 눌러 일정을 추가해보세요.</p>
           </div>
-          <div className="w-full">
-            <RadioGroupItem
-              value="period"
-              id="period"
-              className="peer sr-only"
-            />
-            <Label
-              htmlFor="period"
-              className="flex flex-1 flex-col items-center justify-between gap-2 rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-            >
-              <Calendar1 />
-              기간 선택
-            </Label>
+        ) : (
+          <div className="space-y-3">
+            {schedules.map((schedule) => (
+              <div key={schedule.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar1 className="h-4 w-4" />
+                    <span className="font-medium">일정</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    <p>날짜: {schedule.dates.join(', ')}</p>
+                    <p>시간: {schedule.startTime} ~ {schedule.endTime}</p>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => handleRemoveSchedule(schedule.id)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive hover:text-destructive"
+                >
+                  삭제
+                </Button>
+              </div>
+            ))}
           </div>
-        </RadioGroup>
+        )}
       </div>
 
-      <div className="mx-6 my-4 flex flex-col gap-2">
-        <Label htmlFor="calendar">약속 날짜</Label>
-        <div className="flex justify-center">
-          {periodType === 'individual' && <MultipleSelectCalendar onSelect={handleDatesSelect} />}
-          {periodType === 'period' && <RangeSelectCalendar onSelect={handleDatesSelect} />}
-        </div>
-      </div>
-
-      <div className="mx-6 my-4 flex flex-col gap-2">
-        <Label htmlFor="time">시간대</Label>
-        <div className="flex items-center gap-4">
-          <TimeTicker value={startTime} onSelect={setStartTime} />
-          ~
-          <TimeTicker value={endTime} onSelect={setEndTime} />
-        </div>
-      </div>
+      <ScheduleSelectionModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onConfirm={handleAddSchedule}
+      />
     </div>
   )
 }
