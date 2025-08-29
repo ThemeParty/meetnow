@@ -9,24 +9,32 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import { MultipleSelectCalendar } from './mutiple-select-calendar'
-import { TimeTicker } from './time-ticker'
 
 interface ScheduleSelectionModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: (data: {
     dates: string[]
-    startTime: string
-    endTime: string
+    selectedTimes: string[]
   }) => void
   initialData?: {
     dates?: string[]
-    startTime?: string
-    endTime?: string
+    selectedTimes?: string[]
   }
+}
+
+const generateTimeSlots = () => {
+  const times = []
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute of [0, 30]) {
+      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+      times.push(timeString)
+    }
+  }
+  return times
 }
 
 export const ScheduleSelectionModal = ({
@@ -36,14 +44,13 @@ export const ScheduleSelectionModal = ({
   initialData
 }: ScheduleSelectionModalProps) => {
   const [selectedDates, setSelectedDates] = useState<string[]>(initialData?.dates || [])
-  const [startTime, setStartTime] = useState<string>(initialData?.startTime || '')
-  const [endTime, setEndTime] = useState<string>(initialData?.endTime || '')
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(initialData?.selectedTimes || [])
+  const timeSlots = generateTimeSlots()
 
   useEffect(() => {
     if (initialData) {
       setSelectedDates(initialData.dates || [])
-      setStartTime(initialData.startTime || '')
-      setEndTime(initialData.endTime || '')
+      setSelectedTimes(initialData.selectedTimes || [])
     }
   }, [initialData])
 
@@ -56,11 +63,18 @@ export const ScheduleSelectionModal = ({
     }
   }
 
+  const handleTimeToggle = (time: string) => {
+    setSelectedTimes(prev => 
+      prev.includes(time) 
+        ? prev.filter(t => t !== time)
+        : [...prev, time].sort()
+    )
+  }
+
   const handleConfirm = () => {
     onConfirm({
       dates: selectedDates,
-      startTime,
-      endTime
+      selectedTimes: selectedTimes
     })
     onOpenChange(false)
   }
@@ -73,21 +87,37 @@ export const ScheduleSelectionModal = ({
         </DialogHeader>
 
         <div className="space-y-6">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="calendar">약속 날짜</Label>
-            <div className="flex justify-center">
-              <MultipleSelectCalendar onSelect={handleDatesSelect} />
-            </div>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>날짜 선택</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-center">
+                <MultipleSelectCalendar onSelect={handleDatesSelect} />
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="time">시간대</Label>
-            <div className="flex items-center gap-4">
-              <TimeTicker value={startTime} onSelect={setStartTime} />
-              ~
-              <TimeTicker value={endTime} onSelect={setEndTime} />
-            </div>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>시간 선택</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-4 gap-2 max-h-60 overflow-y-auto">
+                {timeSlots.map((time) => (
+                  <Button
+                    key={time}
+                    variant={selectedTimes.includes(time) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleTimeToggle(time)}
+                    className="text-xs"
+                  >
+                    {time}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>

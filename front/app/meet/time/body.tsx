@@ -18,8 +18,7 @@ export const Body = () => {
   const [schedules, setSchedules] = useState<Array<{
     id: string;
     dates: string[];
-    startTime: string;
-    endTime: string;
+    selectedTimes: string[];
   }>>([]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,8 +33,7 @@ export const Body = () => {
 
   const handleAddSchedule = (data: {
     dates: string[];
-    startTime: string;
-    endTime: string;
+    selectedTimes: string[];
   }) => {
     const newSchedule = {
       id: Date.now().toString(),
@@ -46,10 +44,11 @@ export const Body = () => {
     
     // 첫 번째 일정의 데이터로 meetingData 업데이트
     if (newSchedules.length === 1) {
+      const sortedTimes = data.selectedTimes.sort();
       updateMeetingData({
         duration: 'individual',
         dates: data.dates,
-        times: [data.startTime, data.endTime]
+        times: sortedTimes.length > 0 ? [sortedTimes[0], sortedTimes[sortedTimes.length - 1]] : ['', '']
       });
     }
   };
@@ -61,10 +60,11 @@ export const Body = () => {
     // 일정이 삭제된 후 첫 번째 일정으로 meetingData 업데이트
     if (newSchedules.length > 0) {
       const firstSchedule = newSchedules[0];
+      const sortedTimes = firstSchedule.selectedTimes.sort();
       updateMeetingData({
         duration: 'individual',
         dates: firstSchedule.dates,
-        times: [firstSchedule.startTime, firstSchedule.endTime]
+        times: sortedTimes.length > 0 ? [sortedTimes[0], sortedTimes[sortedTimes.length - 1]] : ['', '']
       });
     } else {
       updateMeetingData({
@@ -119,7 +119,7 @@ export const Body = () => {
                   </div>
                   <div className="text-sm text-muted-foreground">
                     <p>날짜: {schedule.dates.join(', ')}</p>
-                    <p>시간: {schedule.startTime} ~ {schedule.endTime}</p>
+                    <p>시간: {schedule.selectedTimes.length > 0 ? schedule.selectedTimes.join(', ') : '선택된 시간 없음'}</p>
                   </div>
                 </div>
                 <Button 
