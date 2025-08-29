@@ -16,17 +16,10 @@ export default function Page() {
   const { meetingData } = useMeetingCreation()
 
   const handleSubmit = async () => {
-    // 미팅 날짜와 시간을 ISO 8601 형식으로 결합
-    const meetingDateTimes = meetingData.dates.flatMap((date) => {
-      const times = meetingData.times
-      if (times.length === 2) {
-        return [
-          `${date}T${times[0]}:00`, // 초 추가
-          `${date}T${times[1]}:00`,
-        ]
-      }
-      return []
-    })
+    // 개별 일정을 ISO 8601 형식으로 변환
+    const meetingDateTimes = meetingData.schedules.map(schedule => 
+      `${schedule.date}T${schedule.time}:00`
+    )
 
     // 마감 날짜를 현재로부터 7일 뒤로 설정 (임의 값, 필요시 변경)
     const now = new Date()
@@ -54,17 +47,14 @@ export default function Page() {
         {/* 미팅 정보 요약 표시 */}
         <div className="space-y-4">
           <div className="font-semibold">약속 이름: {meetingData.name}</div>
-          <div className="font-semibold">날짜와 시간:</div>
-          {meetingData.dates.map((date, dateIndex) => (
-            <div key={dateIndex} className="ml-4">
-              {date}:
-              {meetingData.times.map((time, timeIndex, times) => (
-                <span key={timeIndex} className="ml-2">
-                  {time}:00 {timeIndex === 0 ? ' ~' : ''}
-                </span>
-              ))}
-            </div>
-          ))}
+          <div className="font-semibold">일정 목록:</div>
+          <div className="ml-4 space-y-2">
+            {meetingData.schedules.map((schedule, index) => (
+              <div key={index} className="p-2 border rounded bg-muted text-foreground">
+                📅 {schedule.date} &nbsp;&nbsp; ⏰ {schedule.time}
+              </div>
+            ))}
+          </div>
           <div className="font-semibold">장소:</div>
           <ul className="ml-4 list-inside list-disc">
             {meetingData.places.map((place, index) => (

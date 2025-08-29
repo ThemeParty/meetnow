@@ -19,7 +19,7 @@ export const Body = () => {
     id: string;
     date: string;
     time: string;
-  }>>([]);
+  }>>(meetingData.schedules.map((s, index) => ({ ...s, id: `init-${index}` })));
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -38,17 +38,19 @@ export const Body = () => {
       time: item.time
     }));
     
-    setSchedules(prev => [...prev, ...newSchedules]);
-    
-    // meetingData 업데이트 - 모든 날짜와 시간을 추출
     const allSchedules = [...schedules, ...newSchedules];
+    setSchedules(allSchedules);
+    
+    // meetingData 업데이트 - 개별 일정과 날짜/시간 요약 정보 모두 저장
     const uniqueDates = [...new Set(allSchedules.map(s => s.date))];
     const uniqueTimes = [...new Set(allSchedules.map(s => s.time))].sort();
+    const schedulesForContext = allSchedules.map(s => ({ date: s.date, time: s.time }));
     
     updateMeetingData({
       duration: 'individual',
       dates: uniqueDates,
-      times: uniqueTimes.length > 0 ? [uniqueTimes[0], uniqueTimes[uniqueTimes.length - 1]] : ['', '']
+      times: uniqueTimes.length > 0 ? [uniqueTimes[0], uniqueTimes[uniqueTimes.length - 1]] : ['', ''],
+      schedules: schedulesForContext
     });
   };
 
@@ -60,16 +62,19 @@ export const Body = () => {
     if (newSchedules.length > 0) {
       const uniqueDates = [...new Set(newSchedules.map(s => s.date))];
       const uniqueTimes = [...new Set(newSchedules.map(s => s.time))].sort();
+      const schedulesForContext = newSchedules.map(s => ({ date: s.date, time: s.time }));
       updateMeetingData({
         duration: 'individual',
         dates: uniqueDates,
-        times: uniqueTimes.length > 0 ? [uniqueTimes[0], uniqueTimes[uniqueTimes.length - 1]] : ['', '']
+        times: uniqueTimes.length > 0 ? [uniqueTimes[0], uniqueTimes[uniqueTimes.length - 1]] : ['', ''],
+        schedules: schedulesForContext
       });
     } else {
       updateMeetingData({
         duration: 'individual',
         dates: [],
-        times: ['', '']
+        times: ['', ''],
+        schedules: []
       });
     }
   };
