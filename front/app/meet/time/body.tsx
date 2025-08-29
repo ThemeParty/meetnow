@@ -17,8 +17,8 @@ export const Body = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [schedules, setSchedules] = useState<Array<{
     id: string;
-    dates: string[];
-    selectedTimes: string[];
+    date: string;
+    time: string;
   }>>([]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,40 +31,39 @@ export const Body = () => {
     setMeetingName(meetingData.name);
   }, [meetingData.name]);
 
-  const handleAddSchedule = (data: {
-    dates: string[];
-    selectedTimes: string[];
-  }) => {
-    const newSchedule = {
-      id: Date.now().toString(),
-      ...data
-    };
-    const newSchedules = [...schedules, newSchedule];
-    setSchedules(newSchedules);
+  const handleAddSchedule = (scheduleData: { date: string; time: string }[]) => {
+    const newSchedules = scheduleData.map((item, index) => ({
+      id: `${Date.now()}-${index}`,
+      date: item.date,
+      time: item.time
+    }));
     
-    // 첫 번째 일정의 데이터로 meetingData 업데이트
-    if (newSchedules.length === 1) {
-      const sortedTimes = data.selectedTimes.sort();
-      updateMeetingData({
-        duration: 'individual',
-        dates: data.dates,
-        times: sortedTimes.length > 0 ? [sortedTimes[0], sortedTimes[sortedTimes.length - 1]] : ['', '']
-      });
-    }
+    setSchedules(prev => [...prev, ...newSchedules]);
+    
+    // meetingData 업데이트 - 모든 날짜와 시간을 추출
+    const allSchedules = [...schedules, ...newSchedules];
+    const uniqueDates = [...new Set(allSchedules.map(s => s.date))];
+    const uniqueTimes = [...new Set(allSchedules.map(s => s.time))].sort();
+    
+    updateMeetingData({
+      duration: 'individual',
+      dates: uniqueDates,
+      times: uniqueTimes.length > 0 ? [uniqueTimes[0], uniqueTimes[uniqueTimes.length - 1]] : ['', '']
+    });
   };
 
   const handleRemoveSchedule = (id: string) => {
     const newSchedules = schedules.filter(schedule => schedule.id !== id);
     setSchedules(newSchedules);
     
-    // 일정이 삭제된 후 첫 번째 일정으로 meetingData 업데이트
+    // meetingData 업데이트 - 남은 일정들로부터 날짜와 시간 추출
     if (newSchedules.length > 0) {
-      const firstSchedule = newSchedules[0];
-      const sortedTimes = firstSchedule.selectedTimes.sort();
+      const uniqueDates = [...new Set(newSchedules.map(s => s.date))];
+      const uniqueTimes = [...new Set(newSchedules.map(s => s.time))].sort();
       updateMeetingData({
         duration: 'individual',
-        dates: firstSchedule.dates,
-        times: sortedTimes.length > 0 ? [sortedTimes[0], sortedTimes[sortedTimes.length - 1]] : ['', '']
+        dates: uniqueDates,
+        times: uniqueTimes.length > 0 ? [uniqueTimes[0], uniqueTimes[uniqueTimes.length - 1]] : ['', '']
       });
     } else {
       updateMeetingData({
@@ -118,8 +117,8 @@ export const Body = () => {
                     <span className="font-medium">일정</span>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    <p>날짜: {schedule.dates.join(', ')}</p>
-                    <p>시간: {schedule.selectedTimes.length > 0 ? schedule.selectedTimes.join(', ') : '선택된 시간 없음'}</p>
+                    <p>날짜: {schedule.date}</p>
+                    <p>시간: {schedule.time}</p>
                   </div>
                 </div>
                 <Button 
