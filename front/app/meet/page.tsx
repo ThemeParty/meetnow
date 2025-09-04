@@ -9,15 +9,14 @@ import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useMeetingCreation } from '@/lib/context/MeetingCreationContext'
+import { MainCarousel } from '@/components/main-carousel'
 
 export default function Page() {
   return (
     <PageContainer title={'우리 만날까요?'}>
       <div className="flex flex-col gap-8">
         <div className="mt-20 flex items-center justify-center">
-          <div className="flex h-[200px] w-[200px] items-center justify-center rounded-full bg-gray-200">
-            이미지
-          </div>
+          <MainCarousel />
         </div>
         <div className="flex justify-center">
           <Button className="flex gap-4" asChild>
