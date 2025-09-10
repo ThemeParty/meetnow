@@ -11,6 +11,52 @@ import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
 import { useMeetingCreation } from '@/lib/context/MeetingCreationContext'
 
+// 날짜를 한국어 형식으로 변환하는 함수
+const formatKoreanDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+
+  // 요일 배열
+  const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
+  const weekday = weekdays[date.getDay()]
+
+  return `${year}년 ${month}월 ${day}일 (${weekday})`
+}
+
+// 시간을 한국어 형식으로 변환하는 함수
+const formatKoreanTime = (timeString: string) => {
+  // 시간 문자열이 "HH" 또는 "HH:MM" 형식일 수 있음
+  let hour: string, minute: string;
+
+  if (timeString.includes(':')) {
+    [hour, minute] = timeString.split(':');
+  } else {
+    hour = timeString;
+    minute = '00';
+  }
+
+  const hourNum = parseInt(hour);
+  const minuteNum = parseInt(minute);
+
+  let timePrefix = '';
+  if (hourNum < 12) {
+    timePrefix = '오전';
+  } else if (hourNum === 12) {
+    timePrefix = '오후';
+  } else {
+    timePrefix = '오후';
+  }
+
+  // 분이 0이면 "시"만, 아니면 "시 분" 표시
+  if (minuteNum === 0) {
+    return `${timePrefix} ${hourNum}시`;
+  } else {
+    return `${timePrefix} ${hourNum}시 ${minuteNum}분`;
+  }
+}
+
 export default function Page() {
   const router = useRouter()
   const { meetingData } = useMeetingCreation()
@@ -43,7 +89,7 @@ export default function Page() {
 
   return (
     <PageContainer title="이렇게 약속을 만들까요?">
-      <div className="m-4">
+      <div className="max-w-2xl mx-auto p-6">
         {/* 미팅 정보 요약 표시 */}
         <div className="space-y-4">
           <div className="font-semibold">약속 이름: {meetingData.name}</div>
@@ -66,14 +112,14 @@ export default function Page() {
         </div>
 
         <BottomActions>
-          <div className="flex justify-between gap-2">
-            <Button variant="outline" className="flex gap-4" asChild>
+          <div className="flex justify-between gap-4">
+            <Button variant="outline" className="flex gap-2 px-6 py-3" asChild>
               <Link href="/meet/time" replace>
                 이전 단계로
               </Link>
             </Button>
-            <Button className="flex gap-4" onClick={handleSubmit}>
-              약속 만들기 <MoveRight />
+            <Button className="flex gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700" onClick={handleSubmit}>
+              약속 만들기 <MoveRight className="w-4 h-4" />
             </Button>
           </div>
         </BottomActions>

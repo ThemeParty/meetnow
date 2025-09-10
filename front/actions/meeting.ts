@@ -43,9 +43,66 @@ export const createMeeting = async (
   return await response.json()
 }
 
+interface VoteInMeetingData {
+  participantName: string
+  preferredDateTimeIds: string[] // 선호하는 날짜/시간 ID 배열
+  preferredPlaceIds: string[] // 선호하는 장소 ID 배열
+}
+
+interface VoteInMeetingResponse {
+  participantInfo: {
+    id: string
+    name: string
+  }
+  preferredDateTimes: string[] // 선호하는 날짜/시간들
+  preferredPlaceNames: string[] // 선호하는 장소 이름들
+}
+
+/**
+ * POST /api/v1/meetings/{meetingId}/vote 엔드포인트에 요청을 보내 참여자의 투표를 저장하는 Next.js 서버 액션입니다.
+ * @param meetingId 미팅 ID
+ * @param data 저장할 투표 데이터
+ * @returns 저장된 투표 데이터의 응답
+ */
+export const voteInMeeting = async (
+  meetingId: string,
+  data: VoteInMeetingData,
+): Promise<VoteInMeetingResponse> => {
+  const response = await fetch(
+    `${env.API_BASE_URL}/api/v1/meetings/${meetingId}/vote`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': env.ACCESS_KEY_SECRET,
+      },
+      body: JSON.stringify({
+        participantName: data.participantName,
+        preferredDateTimeIds: data.preferredDateTimeIds,
+        preferredPlaceIds: data.preferredPlaceIds,
+      }),
+    },
+  )
+
+  // 입력값 확인용 로그
+  console.log('voteInMeeting input:', { meetingId, ...data })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(
+      `투표 저장 실패: ${response.status} ${response.statusText}${errorData.message ? ` - ${errorData.message}` : ''}`,
+    )
+  }
+
+  return await response.json()
+}
+
+// 기존 saveParticipantData 함수는 하위 호환성을 위해 유지
 interface SaveParticipantData {
   meetingId: string
-  selectedPlaces: string[]
+  participantName?: string
+  preferredDateTimeIds?: string[] // 선호하는 날짜/시간 ID 배열
+  preferredPlaceIds: string[] // 선호하는 장소 ID 배열
 }
 
 interface SaveParticipantResponse {
@@ -53,29 +110,52 @@ interface SaveParticipantResponse {
 }
 
 /**
- * POST /api/{meetingId}/participant 엔드포인트에 요청을 보내 참여자의 장소 선택을 저장하는 Next.js 서버 액션입니다.
+ * POST /api/v1/meetings/{meetingId}/vote 엔드포인트에 요청을 보내 참여자의 투표를 저장하는 Next.js 서버 액션입니다.
  * @param data 저장할 참여자 데이터
  * @returns 저장된 데이터의 응답
  */
 export const saveParticipantData = async (
   data: SaveParticipantData,
 ): Promise<SaveParticipantResponse> => {
-  // API 호출이 아직 구현되지 않았으므로 주석 처리
-  // const response = await fetch(`${env.API_BASE_URL}/api/${data.meetingId}/participant`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'x-api-key': env.ACCESS_KEY_SECRET
-  //   },
-  //   body: JSON.stringify(data),
-  // })
-
   // 입력값 확인용 로그
   console.log('saveParticipantData input:', data)
 
-  // Mock 데이터 반환
+  // localStorage에서 참여자 이름 가져오기 (없으면 기본값 사용)
+  const participantName = data.participantName || `참여자-${Date.now()}`
+
+  // 새로운 voteInMeeting API 사용
+  const voteData: VoteInMeetingData = {
+    participantName,
+    preferredDateTimeIds: data.preferredDateTimeIds || [],
+    preferredPlaceIds: data.preferredPlaceIds,
+  }
+
+  const response = await fetch(
+    `${env.API_BASE_URL}/api/v1/meetings/${data.meetingId}/vote`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': env.ACCESS_KEY_SECRET,
+      },
+      body: JSON.stringify({
+        participantName: voteData.participantName,
+        preferredDateTimeIds: voteData.preferredDateTimeIds,
+        preferredPlaceIds: voteData.preferredPlaceIds,
+      }),
+    },
+  )
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(
+      `참여자 데이터 저장 실패: ${response.status} ${response.statusText}${errorData.message ? ` - ${errorData.message}` : ''}`,
+    )
+  }
+
+  const result = await response.json()
   return {
-    id: 'mock-participant-id-123',
+    id: result.participantInfo.id,
   }
 }
 
@@ -141,4 +221,42 @@ export const getMeetingDetail = async (
   const result = await response.json()
   console.log(result)
   return result
+}
+
+interface GetParticipantInfoResponse {
+  id: string
+  name: string
+  selectedDateTimes: string[]
+  selectedPlaces: string[]
+}
+
+/**
+ * GET /api/v1/meetings/{meetingId}/participants/{participantId} 엔드포인트에 요청을 보내 참여자 정보를 가져오는 Next.js 서버 액션입니다.
+ * @param meetingId 미팅 ID
+ * @param participantId 참여자 ID
+ * @returns 참여자 정보
+ */
+export const getParticipantInfo = async (
+  meetingId: string,
+  participantId: string,
+): Promise<GetParticipantInfoResponse> => {
+  const response = await fetch(
+    `${env.API_BASE_URL}/api/v1/meetings/${meetingId}/participants/${participantId}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': env.ACCESS_KEY_SECRET,
+      },
+    },
+  )
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(
+      `참여자 정보 조회 실패: ${response.status} ${response.statusText}${errorData.message ? ` - ${errorData.message}` : ''}`,
+    )
+  }
+
+  return await response.json()
 }
