@@ -62,17 +62,10 @@ export default function Page() {
   const { meetingData } = useMeetingCreation()
 
   const handleSubmit = async () => {
-    // 미팅 날짜와 시간을 ISO 8601 형식으로 결합
-    const meetingDateTimes = meetingData.dates.flatMap((date) => {
-      const times = meetingData.times
-      if (times.length === 2) {
-        return [
-          `${date}T${times[0]}:00`, // 초 추가
-          `${date}T${times[1]}:00`,
-        ]
-      }
-      return []
-    })
+    // 개별 일정을 ISO 8601 형식으로 변환
+    const meetingDateTimes = meetingData.schedules.map(schedule => 
+      `${schedule.date}T${schedule.time}:00`
+    )
 
     // 마감 날짜를 현재로부터 7일 뒤로 설정 (임의 값, 필요시 변경)
     const now = new Date()
@@ -98,54 +91,24 @@ export default function Page() {
     <PageContainer title="이렇게 약속을 만들까요?">
       <div className="max-w-2xl mx-auto p-6">
         {/* 미팅 정보 요약 표시 */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-6">
-          {/* 약속 이름 */}
-          <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              약속 이름
-            </h3>
-            <p className="text-gray-700 dark:text-gray-300 text-lg">
-              {meetingData.name}
-            </p>
+        <div className="space-y-4">
+          <div className="font-semibold">약속 이름: {meetingData.name}</div>
+          <div className="font-semibold">일정 목록:</div>
+          <div className="ml-4 space-y-2">
+            {meetingData.schedules.map((schedule, index) => (
+              <div key={index} className="p-2 border rounded bg-muted text-foreground">
+                📅 {schedule.date} &nbsp;&nbsp; ⏰ {schedule.time}
+              </div>
+            ))}
           </div>
-
-          {/* 모임 시간 */}
-          <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              모임 시간
-            </h3>
-            <div className="space-y-3">
-              {meetingData.dates.map((date, dateIndex) => (
-                <div key={dateIndex} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <div className="font-medium text-gray-900 dark:text-gray-100 mb-2">
-                    {formatKoreanDate(date)}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400">
-                    {meetingData.times.map((time, timeIndex) => (
-                      <span key={timeIndex} className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium mr-2">
-                        {formatKoreanTime(time)}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 장소 */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              장소
-            </h3>
-            <div className="space-y-2">
-              {meetingData.places.map((place, index) => (
-                <div key={index} className="flex items-center space-x-3 bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-gray-700 dark:text-gray-300">{place}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="font-semibold">장소:</div>
+          <ul className="ml-4 list-inside list-disc">
+            {meetingData.places.map((place, index) => (
+              <li key={index} className="ml-2">
+                {place}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <BottomActions>
